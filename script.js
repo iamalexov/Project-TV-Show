@@ -1,8 +1,17 @@
-let allEpisodeList;
+let allEpisodeList = [];
 
 function setup() {
   allEpisodeList = getAllEpisodes();
+  setupSearchInput();
   render(allEpisodeList);
+}
+
+function setupSearchInput() {
+  document.getElementById("search-input").addEventListener("input", onSearchInput);
+}
+
+function onSearchInput(event) {
+  console.log(event.target.value);
 }
 
 function render(episodeList) {
