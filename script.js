@@ -22,6 +22,17 @@ function onSearchInput(event) {
 }
 
 function render(episodeList) {
+  renderSearchLabel(episodeList);
+  renderEpisodeCards(episodeList);
+}
+
+function renderSearchLabel(episodeList) {
+  const searchLabel = document.getElementById("search-label");
+  searchLabel.textContent = `Displaying ${episodeList.length}/${allEpisodeList.length}
+    episode${episodeList.length > 1 ? "s" : ""}`;
+}
+
+function renderEpisodeCards(episodeList) {
   const rootElem = document.getElementById("root");
 
   rootElem.innerHTML = "";
