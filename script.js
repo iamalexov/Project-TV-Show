@@ -11,7 +11,14 @@ function setupSearchInput() {
 }
 
 function onSearchInput(event) {
-  console.log(event.target.value);
+  const searchString = event.target.value.toLowerCase();
+  const filteredEpisodeList = allEpisodeList.filter(
+    (episode) =>
+      episode.name.toLowerCase().includes(searchString) ||
+      episode.summary.toLowerCase().includes(searchString)
+  );
+
+  render(filteredEpisodeList);
 }
 
 function render(episodeList) {
