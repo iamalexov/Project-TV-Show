@@ -1,14 +1,12 @@
-//You can edit ALL of the code here
+let allEpisodeList;
+
 function setup() {
-  const allEpisodes = getAllEpisodes();
-  makePageForEpisodes(allEpisodes);
+  allEpisodeList = getAllEpisodes();
+  render(allEpisodeList);
 }
 
-function makePageForEpisodes(episodeList) {
+function render(episodeList) {
   const rootElem = document.getElementById("root");
-  rootElem.textContent = `Got ${episodeList.length} episode(s)`;
-
-  //You can edit ALL of the code here
 
   rootElem.innerHTML = "";
 
@@ -30,6 +28,5 @@ function makePageForEpisodes(episodeList) {
     root.append(card);
   });
 }
-
 
 window.onload = setup;
