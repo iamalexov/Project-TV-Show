@@ -61,6 +61,7 @@ function renderEpisodeCards(episodeList) {
   episodeList.forEach((episode) => {
     const card = document.createElement("section");
     card.classList.add("card");
+    card.id = getEpisodeCode(episode);
 
     const title = document.createElement("h3");
     title.textContent = episode.name;
