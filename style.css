@@ -4,6 +4,13 @@
   margin: 0;
 }
 
+#episode-select {
+  width: 500px;
+  height: 40px;
+  font-size: large;
+  margin-left: 30px;
+}
+
 #search-section {
   font-size: x-large;
   padding: 30px;
@@ -13,10 +20,11 @@
   width: 300px;
   height: 40px;
   font-size: large;
+  margin-left: 100px;
 }
 
 #search-label {
-  padding-left: 50px;
+  padding-left: 30px;
 }
 
 #root {
