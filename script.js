@@ -22,8 +22,20 @@ function onSearchInput(event) {
 }
 
 function render(episodeList) {
+  renderSelect(episodeList);
   renderSearchLabel(episodeList);
   renderEpisodeCards(episodeList);
+}
+
+function renderSelect(episodeList) {
+  const selectElement = document.getElementById("episode-select");
+
+  selectElement.options.length = 0;
+  
+  episodeList.forEach(element => {
+    const code = `S${(element.season + "").padStart(2, "0")}E${(element.number + "").padStart(2, "0")}`;
+    selectElement.add(new Option(`${code} – ${element.name}`), code);
+  });
 }
 
 function renderSearchLabel(episodeList) {
