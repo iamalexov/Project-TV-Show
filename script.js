@@ -2,8 +2,17 @@ let allEpisodeList = [];
 
 function setup() {
   allEpisodeList = getAllEpisodes();
+  setupEpisodeSelect();
   setupSearchInput();
   render(allEpisodeList);
+}
+
+function setupEpisodeSelect() {
+  document.getElementById("episode-select").addEventListener("input", onInputEpisode);
+}
+
+function onInputEpisode(event) {
+  console.log(event.target.value);
 }
 
 function setupSearchInput() {
@@ -31,10 +40,10 @@ function renderSelect(episodeList) {
   const selectElement = document.getElementById("episode-select");
 
   selectElement.options.length = 0;
-  
+
   episodeList.forEach(element => {
     const code = `S${(element.season + "").padStart(2, "0")}E${(element.number + "").padStart(2, "0")}`;
-    selectElement.add(new Option(`${code} – ${element.name}`), code);
+    selectElement.add(new Option(`${code} – ${element.name}`, code));
   });
 }
 
