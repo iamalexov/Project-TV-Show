@@ -4,6 +4,13 @@
   margin: 0;
 }
 
+header {
+  position: fixed;
+  background-color: white;
+  z-index: 100;
+  width: 100%;
+}
+
 #episode-select {
   width: 500px;
   height: 40px;
@@ -32,6 +39,7 @@
   grid-template-columns: repeat(3, 1fr); 
   gap: 20px;
   padding: 20px;
+  padding-top: 100px;
 }
 
 
