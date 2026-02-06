@@ -12,7 +12,10 @@ function setupEpisodeSelect() {
 }
 
 function onInputEpisode(event) {
-  console.log(event.target.value);
+  document.getElementById(event.target.value).scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 }
 
 function setupSearchInput() {
