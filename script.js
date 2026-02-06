@@ -1,20 +1,70 @@
-//You can edit ALL of the code here
+let allEpisodeList = [];
+
 function setup() {
-  const allEpisodes = getAllEpisodes();
-  makePageForEpisodes(allEpisodes);
+  allEpisodeList = getAllEpisodes();
+  setupEpisodeSelect();
+  setupSearchInput();
+  render(allEpisodeList);
 }
 
-function makePageForEpisodes(episodeList) {
-  const rootElem = document.getElementById("root");
-  rootElem.textContent = `Got ${episodeList.length} episode(s)`;
+function setupEpisodeSelect() {
+  document.getElementById("episode-select").addEventListener("input", onInputEpisode);
+}
 
-  //You can edit ALL of the code here
+function onInputEpisode(event) {
+  document.getElementById(event.target.value).scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+function setupSearchInput() {
+  document.getElementById("search-input").addEventListener("input", onSearchInput);
+}
+
+function onSearchInput(event) {
+  const searchString = event.target.value.toLowerCase();
+  const filteredEpisodeList = allEpisodeList.filter(
+    (episode) =>
+      episode.name.toLowerCase().includes(searchString) ||
+      episode.summary.toLowerCase().includes(searchString)
+  );
+
+  render(filteredEpisodeList);
+}
+
+function render(episodeList) {
+  renderSelect(episodeList);
+  renderSearchLabel(episodeList);
+  renderEpisodeCards(episodeList);
+}
+
+function renderSelect(episodeList) {
+  const selectElement = document.getElementById("episode-select");
+
+  selectElement.options.length = 0;
+
+  episodeList.forEach(episode => {
+    const code = getEpisodeCode(episode);
+    selectElement.add(new Option(`${code} – ${episode.name}`, code));
+  });
+}
+
+function renderSearchLabel(episodeList) {
+  const searchLabel = document.getElementById("search-label");
+  searchLabel.textContent = `Displaying ${episodeList.length}/${allEpisodeList.length}
+    episode${episodeList.length > 1 ? "s" : ""}`;
+}
+
+function renderEpisodeCards(episodeList) {
+  const rootElem = document.getElementById("root");
 
   rootElem.innerHTML = "";
 
   episodeList.forEach((episode) => {
     const card = document.createElement("section");
     card.classList.add("card");
+    card.id = getEpisodeCode(episode);
 
     const title = document.createElement("h3");
     title.textContent = episode.name;
@@ -31,5 +81,8 @@ function makePageForEpisodes(episodeList) {
   });
 }
 
+function getEpisodeCode(episode) {
+  return `S${(episode.season + "").padStart(2, "0")}E${(episode.number + "").padStart(2, "0")}`;
+}
 
 window.onload = setup;
