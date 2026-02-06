@@ -41,9 +41,9 @@ function renderSelect(episodeList) {
 
   selectElement.options.length = 0;
 
-  episodeList.forEach(element => {
-    const code = `S${(element.season + "").padStart(2, "0")}E${(element.number + "").padStart(2, "0")}`;
-    selectElement.add(new Option(`${code} – ${element.name}`, code));
+  episodeList.forEach(episode => {
+    const code = getEpisodeCode(episode);
+    selectElement.add(new Option(`${code} – ${episode.name}`, code));
   });
 }
 
@@ -75,6 +75,10 @@ function renderEpisodeCards(episodeList) {
     card.append(title, createImg, desc);
     root.append(card);
   });
+}
+
+function getEpisodeCode(episode) {
+  return `S${(episode.season + "").padStart(2, "0")}E${(episode.number + "").padStart(2, "0")}`;
 }
 
 window.onload = setup;
