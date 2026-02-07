@@ -1,10 +1,13 @@
 let allEpisodeList = [];
-
-function setup() {
-  allEpisodeList = getAllEpisodes();
+function fetchEpisode() {
+fetch("https://api.tvmaze.com/shows/82/episodes")
+.then(res => res.json())
+.then(data => {
+  allEpisodeList = data;
   setupEpisodeSelect();
   setupSearchInput();
   render(allEpisodeList);
+  });
 }
 
 function setupEpisodeSelect() {
@@ -59,7 +62,6 @@ function renderSearchLabel(episodeList) {
 function renderEpisodeCards(episodeList) {
   const rootElem = document.getElementById("root");
 
-  rootElem.innerHTML = "";
 
   episodeList.forEach((episode) => {
     const card = document.createElement("section");
@@ -74,10 +76,10 @@ function renderEpisodeCards(episodeList) {
     createImg.alt = episode.name;
 
     const desc = document.createElement("p");
-    desc.innerHTML = episode.summary;
+    desc.innerHTML = episode.summary || "";
 
     card.append(title, createImg, desc);
-    root.append(card);
+    rootElem.append(card);
   });
 }
 
@@ -85,4 +87,4 @@ function getEpisodeCode(episode) {
   return `S${(episode.season + "").padStart(2, "0")}E${(episode.number + "").padStart(2, "0")}`;
 }
 
-window.onload = setup;
+window.onload = fetchEpisode;
