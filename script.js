@@ -15,18 +15,22 @@ function setupEpisodeSelect() {
 }
 
 function onInputEpisode(event) {
-  document.getElementById(event.target.value).scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
+  const selectedCode = event.target.value;
+  const filteredEpisodeList = allEpisodeList.filter(
+    episode => getEpisodeCode(episode) === selectedCode
+  );
+
+  render(filteredEpisodeList);
 }
 
 function setupSearchInput() {
+  
   document.getElementById("search-input").addEventListener("input", onSearchInput);
 }
 
 function onSearchInput(event) {
   const searchString = event.target.value.toLowerCase();
+  
   const filteredEpisodeList = allEpisodeList.filter(
     (episode) =>
       episode.name.toLowerCase().includes(searchString) ||
