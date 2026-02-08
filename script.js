@@ -34,7 +34,7 @@ function onSearchInput(event) {
   const filteredEpisodeList = allEpisodeList.filter(
     (episode) =>
       episode.name.toLowerCase().includes(searchString) ||
-      episode.summary.toLowerCase().includes(searchString)
+      episode.summary.toLowerCase().includes(searchString) === searchString
   );
 
   render(filteredEpisodeList);
@@ -44,6 +44,7 @@ function render(episodeList) {
   renderSelect(episodeList);
   renderSearchLabel(episodeList);
   renderEpisodeCards(episodeList);
+  
 }
 
 function renderSelect(episodeList) {
@@ -65,6 +66,9 @@ function renderSearchLabel(episodeList) {
 
 function renderEpisodeCards(episodeList) {
   const rootElem = document.getElementById("root");
+
+
+  rootElem.innerHTML = "";
 
 
   episodeList.forEach((episode) => {
