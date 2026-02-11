@@ -9,6 +9,10 @@ fetch("https://api.tvmaze.com/shows/82/episodes")
   setupEpisodeSelect();
   setupSearchInput();
   render(allEpisodeList);
+  })
+  .catch(() => {
+    document.getElementById("root").textContent = "Failed to load episodes. Please try again later";
+
   });
 }
 
@@ -36,7 +40,7 @@ function onSearchInput(event) {
   const filteredEpisodeList = allEpisodeList.filter(
     (episode) =>
       episode.name.toLowerCase().includes(searchString) ||
-      episode.summary.toLowerCase().includes(searchString) === searchString
+      (episode.summary || "").toLowerCase().includes(searchString) 
   );
 
   render(filteredEpisodeList);
