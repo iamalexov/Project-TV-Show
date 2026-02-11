@@ -1,5 +1,7 @@
 let allEpisodeList = [];
 function fetchEpisode() {
+  const root = document.getElementById("root");
+  root.textContent = "Loading episodes...";
 fetch("https://api.tvmaze.com/shows/82/episodes")
 .then(res => res.json())
 .then(data => {
