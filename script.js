@@ -1,10 +1,19 @@
 let allEpisodeList = [];
-
-function setup() {
-  allEpisodeList = getAllEpisodes();
+function fetchEpisode() {
+  const root = document.getElementById("root");
+  root.textContent = "Loading episodes...";
+fetch("https://api.tvmaze.com/shows/82/episodes")
+.then(res => res.json())
+.then(data => {
+  allEpisodeList = data;
   setupEpisodeSelect();
   setupSearchInput();
   render(allEpisodeList);
+  })
+  .catch(() => {
+    document.getElementById("root").textContent = "Failed to load episodes. Please try again later";
+
+  });
 }
 
 function setupEpisodeSelect() {
@@ -12,22 +21,26 @@ function setupEpisodeSelect() {
 }
 
 function onInputEpisode(event) {
-  document.getElementById(event.target.value).scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
+  const selectedCode = event.target.value;
+  const filteredEpisodeList = allEpisodeList.filter(
+    episode => getEpisodeCode(episode) === selectedCode
+  );
+
+  render(filteredEpisodeList);
 }
 
 function setupSearchInput() {
+  
   document.getElementById("search-input").addEventListener("input", onSearchInput);
 }
 
 function onSearchInput(event) {
   const searchString = event.target.value.toLowerCase();
+  
   const filteredEpisodeList = allEpisodeList.filter(
     (episode) =>
       episode.name.toLowerCase().includes(searchString) ||
-      episode.summary.toLowerCase().includes(searchString)
+      (episode.summary || "").toLowerCase().includes(searchString) 
   );
 
   render(filteredEpisodeList);
@@ -37,6 +50,7 @@ function render(episodeList) {
   renderSelect(episodeList);
   renderSearchLabel(episodeList);
   renderEpisodeCards(episodeList);
+  
 }
 
 function renderSelect(episodeList) {
@@ -59,7 +73,9 @@ function renderSearchLabel(episodeList) {
 function renderEpisodeCards(episodeList) {
   const rootElem = document.getElementById("root");
 
+
   rootElem.innerHTML = "";
+
 
   episodeList.forEach((episode) => {
     const card = document.createElement("section");
@@ -74,10 +90,10 @@ function renderEpisodeCards(episodeList) {
     createImg.alt = episode.name;
 
     const desc = document.createElement("p");
-    desc.innerHTML = episode.summary;
+    desc.innerHTML = episode.summary || "";
 
     card.append(title, createImg, desc);
-    root.append(card);
+    rootElem.append(card);
   });
 }
 
@@ -85,4 +101,4 @@ function getEpisodeCode(episode) {
   return `S${(episode.season + "").padStart(2, "0")}E${(episode.number + "").padStart(2, "0")}`;
 }
 
-window.onload = setup;
+window.onload = fetchEpisode;
