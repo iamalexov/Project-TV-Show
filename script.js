@@ -20,12 +20,10 @@ function setupSearchInput() {
 
 //region event listeners
 function onInputEpisodeSelect(event) {
-  const selectedCode = event.target.value;
-  const filteredEpisodeList = allEpisodeList.filter(
-    (episode) => getEpisodeCode(episode) === selectedCode,
-  );
-
-  render(filteredEpisodeList);
+  document.getElementById(event.target.value).scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
 }
 
 function onInputSearchInput(event) {
