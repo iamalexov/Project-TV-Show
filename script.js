@@ -1,19 +1,22 @@
 let allEpisodeList = [];
+
+
 function fetchEpisode() {
   const root = document.getElementById("root");
+  
   root.textContent = "Loading episodes...";
-fetch("https://api.tvmaze.com/shows/82/episodes")
-.then(res => res.json())
-.then(data => {
-  allEpisodeList = data;
-  setupEpisodeSelect();
-  setupSearchInput();
-  render(allEpisodeList);
-  })
-  .catch(() => {
-    document.getElementById("root").textContent = "Failed to load episodes. Please try again later";
 
-  });
+  fetch("https://api.tvmaze.com/shows/82/episodes")
+    .then(res => res.json())
+    .then(data => {
+      allEpisodeList = data;
+      setupEpisodeSelect();
+      setupSearchInput();
+      render(allEpisodeList);
+    })
+    .catch(() => {
+      document.getElementById("root").textContent = "Failed to load episodes. Please try again later";
+    });
 }
 
 function setupEpisodeSelect() {
@@ -37,10 +40,9 @@ function setupSearchInput() {
 function onSearchInput(event) {
   const searchString = event.target.value.toLowerCase();
   
-  const filteredEpisodeList = allEpisodeList.filter(
-    (episode) =>
-      episode.name.toLowerCase().includes(searchString) ||
-      (episode.summary || "").toLowerCase().includes(searchString) 
+  const filteredEpisodeList = allEpisodeList.filter((episode) =>
+    episode.name.toLowerCase().includes(searchString) ||
+    (episode.summary || "").toLowerCase().includes(searchString) 
   );
 
   render(filteredEpisodeList);
@@ -66,6 +68,7 @@ function renderSelect(episodeList) {
 
 function renderSearchLabel(episodeList) {
   const searchLabel = document.getElementById("search-label");
+
   searchLabel.textContent = `Displaying ${episodeList.length}/${allEpisodeList.length}
     episode${episodeList.length > 1 ? "s" : ""}`;
 }
@@ -73,9 +76,7 @@ function renderSearchLabel(episodeList) {
 function renderEpisodeCards(episodeList) {
   const rootElem = document.getElementById("root");
 
-
   rootElem.innerHTML = "";
-
 
   episodeList.forEach((episode) => {
     const card = document.createElement("section");
