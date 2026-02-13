@@ -11,22 +11,29 @@ header {
   width: 100%;
 }
 
-#episode-select {
-  width: 500px;
-  height: 40px;
-  font-size: large;
-  margin-left: 30px;
-}
-
 #search-section {
-  font-size: x-large;
+  font-size: large;
   padding: 30px;
 }
 
-#search-input {
-  width: 300px;
+#show-select {
+  width: 400px;
   height: 40px;
-  font-size: large;
+  font-size: medium;
+  margin-left: 30px;
+}
+
+#episode-select {
+  width: 400px;
+  height: 40px;
+  font-size: medium;
+  margin-left: 30px;
+}
+
+#search-input {
+  width: 200px;
+  height: 40px;
+  font-size: medium;
   margin-left: 100px;
 }
 
