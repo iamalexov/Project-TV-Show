@@ -1,11 +1,20 @@
+const SHOWS_DATA_URL = "https://api.tvmaze.com/shows";
+
+const showList = [];
 let allEpisodeList = [];
 
 
 //region setup
 function setupPage() {
+  setupShowSelect();
   setupEpisodeSelect();
   setupSearchInput();
-  fetchEpisode();
+  //fetchEpisode();
+  setupShowsData();
+}
+
+function setupShowSelect() {
+  document.getElementById("show-select").addEventListener("input", onInputShowSelect);
 }
 
 function setupEpisodeSelect() {
@@ -15,10 +24,25 @@ function setupEpisodeSelect() {
 function setupSearchInput() {
   document.getElementById("search-input").addEventListener("input", onInputSearchInput);
 }
+
+function setupShowsData() {
+  showLoadingDataMessage();
+  fetch(SHOWS_DATA_URL)
+    .then((response) => response.json())
+    .then((data) => {
+      showList.push(...data);
+      renderShowSelect();
+    })
+    .catch(showLoadingErrorMessage);
+}
 //endregion
 
 
 //region event listeners
+function onInputShowSelect(event) {
+  console.log(event.target.value);
+}
+
 function onInputEpisodeSelect(event) {
   document.getElementById(event.target.value).scrollIntoView({
     behavior: "smooth",
@@ -28,7 +52,6 @@ function onInputEpisodeSelect(event) {
 
 function onInputSearchInput(event) {
   const searchString = event.target.value.toLowerCase();
-
   const filteredEpisodeList = allEpisodeList.filter(
     (episode) =>
       episode.name.toLowerCase().includes(searchString) ||
@@ -41,6 +64,10 @@ function onInputSearchInput(event) {
 
 
 //region fetch logic
+function renderShowSelect() {
+  
+}
+
 function fetchEpisode() {
   showLoadingDataMessage();
 
@@ -60,7 +87,6 @@ function render(episodeList) {
   renderSelect(episodeList);
   renderSearchLabel(episodeList);
   renderEpisodeCards(episodeList);
-  
 }
 
 function renderSelect(episodeList) {
