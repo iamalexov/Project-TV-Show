@@ -1,7 +1,11 @@
 const SHOWS_DATA_URL = "https://api.tvmaze.com/shows";
+const SHOW_EPISODES_DATA_URL_TEMPLATE = "https://api.tvmaze.com/shows/{id}/episodes";
+const ID_TOKEN = "{id}";
 
 const showList = [];
-let allEpisodeList = [];
+const showEpisodesMap = new Map();
+
+let selectedShowId = "1";
 
 
 //region setup
@@ -9,7 +13,6 @@ function setupPage() {
   setupShowSelect();
   setupEpisodeSelect();
   setupSearchInput();
-  //fetchEpisode();
   setupShowsData();
 }
 
@@ -26,11 +29,12 @@ function setupSearchInput() {
 }
 
 function setupShowsData() {
+  console.log("setup show data called")
   showLoadingDataMessage();
   fetch(SHOWS_DATA_URL)
     .then((response) => response.json())
     .then((data) => {
-      showList.push(...data);
+      showList.push(...data.sort(showComparatorByName));
       renderShowSelect();
     })
     .catch(showLoadingErrorMessage);
@@ -40,7 +44,12 @@ function setupShowsData() {
 
 //region event listeners
 function onInputShowSelect(event) {
-  console.log(event.target.value);
+  selectedShowId = event.target.value;
+  if (showEpisodesMap.has(selectedShowId)) {
+    render(showEpisodesMap.get(selectedShowId));
+  } else {
+    fetchShowEpisodes();
+  }
 }
 
 function onInputEpisodeSelect(event) {
@@ -52,7 +61,7 @@ function onInputEpisodeSelect(event) {
 
 function onInputSearchInput(event) {
   const searchString = event.target.value.toLowerCase();
-  const filteredEpisodeList = allEpisodeList.filter(
+  const filteredEpisodeList = showEpisodesMap.get(selectedShowId).filter(
     (episode) =>
       episode.name.toLowerCase().includes(searchString) ||
       (episode.summary || "").toLowerCase().includes(searchString),
@@ -64,18 +73,14 @@ function onInputSearchInput(event) {
 
 
 //region fetch logic
-function renderShowSelect() {
-  
-}
-
-function fetchEpisode() {
+function fetchShowEpisodes() {
   showLoadingDataMessage();
 
-  fetch("https://api.tvmaze.com/shows/82/episodes")
-    .then((res) => res.json())
+  fetch(SHOW_EPISODES_DATA_URL_TEMPLATE.replace(ID_TOKEN, selectedShowId))
+    .then((response) => response.json())
     .then((data) => {
-      allEpisodeList = data;
-      render(allEpisodeList);
+      showEpisodesMap.set(selectedShowId, data);
+      render(showEpisodesMap.get(selectedShowId));
     })
     .catch(showLoadingErrorMessage);
 }
@@ -83,27 +88,40 @@ function fetchEpisode() {
 
 
 //region render logic
+function renderShowSelect() {
+  const showSelectElement = document.getElementById("show-select");
+
+  showSelectElement.options.length = 0;
+
+  showList.forEach((show) => {
+    showSelectElement.add(new Option(show.name, show.id))
+  });
+
+  showSelectElement.dispatchEvent(new Event("input"));
+}
+
 function render(episodeList) {
-  renderSelect(episodeList);
+  renderEpisodeSelect(episodeList);
   renderSearchLabel(episodeList);
   renderEpisodeCards(episodeList);
 }
 
-function renderSelect(episodeList) {
-  const selectElement = document.getElementById("episode-select");
+function renderEpisodeSelect(episodeList) {
+  const episodeSelectElement = document.getElementById("episode-select");
 
-  selectElement.options.length = 0;
+  episodeSelectElement.options.length = 0;
 
   episodeList.forEach(episode => {
     const code = getEpisodeCode(episode);
-    selectElement.add(new Option(`${code} – ${episode.name}`, code));
+    episodeSelectElement.add(new Option(`${code} – ${episode.name}`, code));
   });
 }
 
 function renderSearchLabel(episodeList) {
   const searchLabel = document.getElementById("search-label");
 
-  searchLabel.textContent = `Displaying ${episodeList.length}/${allEpisodeList.length}
+  searchLabel.textContent = `Displaying ${episodeList.length}/
+    ${showEpisodesMap.get(selectedShowId).length}
     episode${episodeList.length > 1 ? "s" : ""}`;
 }
 
@@ -145,6 +163,10 @@ function showLoadingDataMessage() {
 
 function showLoadingErrorMessage() {
   document.getElementById("root").textContent = "Failed to load data. Please try again later";
+}
+
+function showComparatorByName(show1, show2) {
+  return show1.name.toLowerCase().localeCompare(show2.name.toLowerCase());
 }
 //endregion
 
