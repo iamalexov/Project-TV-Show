@@ -1,48 +1,63 @@
 let allEpisodeList = [];
 
 
+//region setup
+function setupPage() {
+  setupEpisodeSelect();
+  setupSearchInput();
+  fetchEpisode();
+}
+
+function setupEpisodeSelect() {
+  document.getElementById("episode-select").addEventListener("input", onInputEpisodeSelect);
+}
+
+function setupSearchInput() {
+  document.getElementById("search-input").addEventListener("input", onInputSearchInput);
+}
+//endregion
+
+
+//region event listeners
+function onInputEpisodeSelect(event) {
+  const selectedCode = event.target.value;
+  const filteredEpisodeList = allEpisodeList.filter(
+    (episode) => getEpisodeCode(episode) === selectedCode,
+  );
+
+  render(filteredEpisodeList);
+}
+
+function onInputSearchInput(event) {
+  const searchString = event.target.value.toLowerCase();
+
+  const filteredEpisodeList = allEpisodeList.filter(
+    (episode) =>
+      episode.name.toLowerCase().includes(searchString) ||
+      (episode.summary || "").toLowerCase().includes(searchString),
+  );
+
+  render(filteredEpisodeList);
+}
+//endregion
+
+
+//region fetch logic
 function fetchEpisode() {
   showLoadingDataMessage();
 
-  fetch("https://api.tvmaze.com/shows/82/pisodes")
+  fetch("https://api.tvmaze.com/shows/82/episodes")
     .then((res) => res.json())
     .then((data) => {
       allEpisodeList = data;
-      setupEpisodeSelect();
-      setupSearchInput();
       render(allEpisodeList);
     })
     .catch(showLoadingErrorMessage);
 }
+//endregion
 
-function setupEpisodeSelect() {
-  document.getElementById("episode-select").addEventListener("input", onInputEpisode);
-}
 
-function onInputEpisode(event) {
-  const selectedCode = event.target.value;
-  const filteredEpisodeList = allEpisodeList.filter(
-    episode => getEpisodeCode(episode) === selectedCode
-  );
-
-  render(filteredEpisodeList);
-}
-
-function setupSearchInput() {
-  document.getElementById("search-input").addEventListener("input", onSearchInput);
-}
-
-function onSearchInput(event) {
-  const searchString = event.target.value.toLowerCase();
-  
-  const filteredEpisodeList = allEpisodeList.filter((episode) =>
-    episode.name.toLowerCase().includes(searchString) ||
-    (episode.summary || "").toLowerCase().includes(searchString) 
-  );
-
-  render(filteredEpisodeList);
-}
-
+//region render logic
 function render(episodeList) {
   renderSelect(episodeList);
   renderSearchLabel(episodeList);
@@ -92,17 +107,22 @@ function renderEpisodeCards(episodeList) {
     rootElem.append(card);
   });
 }
+//endregion
 
+
+//region utilities
 function getEpisodeCode(episode) {
   return `S${(episode.season + "").padStart(2, "0")}E${(episode.number + "").padStart(2, "0")}`;
 }
 
 function showLoadingDataMessage() {
-  document.getElementById("root").textContent = "Loading episodes... Please wait";
+  document.getElementById("root").textContent = "Loading episodes... Please wait";  
 }
 
 function showLoadingErrorMessage() {
   document.getElementById("root").textContent = "Failed to load data. Please try again later";
 }
+//endregion
 
-window.onload = fetchEpisode;
+
+window.onload = setupPage;
