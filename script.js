@@ -136,7 +136,7 @@ function renderEpisodeCards(episodeList) {
     card.id = getEpisodeCode(episode);
 
     const title = document.createElement("h3");
-    title.textContent = episode.name;
+    title.textContent = `${episode.name} - ${getEpisodeCode(episode)}`;
 
     const createImg = document.createElement("img");
     createImg.src = episode.image.medium;
