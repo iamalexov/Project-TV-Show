@@ -64,7 +64,8 @@ function onInputSearchInput(event) {
   const filteredEpisodeList = showEpisodesMap.get(selectedShowId).filter(
     (episode) =>
       episode.name.toLowerCase().includes(searchString) ||
-      (episode.summary || "").toLowerCase().includes(searchString),
+      (episode.summary || "").toLowerCase().includes(searchString) ||
+      getEpisodeCode(episode).toLocaleLowerCase().includes(searchString)
   );
 
   render(filteredEpisodeList);
