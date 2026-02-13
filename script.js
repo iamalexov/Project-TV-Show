@@ -2,21 +2,17 @@ let allEpisodeList = [];
 
 
 function fetchEpisode() {
-  const root = document.getElementById("root");
-  
-  root.textContent = "Loading episodes...";
+  showLoadingDataMessage();
 
-  fetch("https://api.tvmaze.com/shows/82/episodes")
-    .then(res => res.json())
-    .then(data => {
+  fetch("https://api.tvmaze.com/shows/82/pisodes")
+    .then((res) => res.json())
+    .then((data) => {
       allEpisodeList = data;
       setupEpisodeSelect();
       setupSearchInput();
       render(allEpisodeList);
     })
-    .catch(() => {
-      document.getElementById("root").textContent = "Failed to load episodes. Please try again later";
-    });
+    .catch(showLoadingErrorMessage);
 }
 
 function setupEpisodeSelect() {
@@ -33,7 +29,6 @@ function onInputEpisode(event) {
 }
 
 function setupSearchInput() {
-  
   document.getElementById("search-input").addEventListener("input", onSearchInput);
 }
 
@@ -100,6 +95,14 @@ function renderEpisodeCards(episodeList) {
 
 function getEpisodeCode(episode) {
   return `S${(episode.season + "").padStart(2, "0")}E${(episode.number + "").padStart(2, "0")}`;
+}
+
+function showLoadingDataMessage() {
+  document.getElementById("root").textContent = "Loading episodes... Please wait";
+}
+
+function showLoadingErrorMessage() {
+  document.getElementById("root").textContent = "Failed to load data. Please try again later";
 }
 
 window.onload = fetchEpisode;
