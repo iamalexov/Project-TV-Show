@@ -1,11 +1,15 @@
 const SHOWS_DATA_URL = "https://api.tvmaze.com/shows";
-const SHOW_EPISODES_DATA_URL_TEMPLATE = "https://api.tvmaze.com/shows/{id}/episodes";
-const ID_TOKEN = "{id}";
+// const SHOW_EPISODES_DATA_URL_TEMPLATE = "https://api.tvmaze.com/shows/{id}/episodes";
+// const ID_TOKEN = "{id}";
+
+function getShowEpisodesUrl(showId) {
+  return `https://api.tvmaze.com/shows/${showId}/episodes`;
+}
 
 const showList = [];
 const showEpisodesMap = new Map();
 
-let selectedShowId = "1";
+let selectedShowId = null;
 
 
 //region setup
@@ -89,17 +93,28 @@ function onInputSearchInput(event) {
 
 
 //region fetch logic
-function fetchShowEpisodes() {
-  showLoadingDataMessage();
+async function fetchShowEpisodes() {
+   showLoadingDataMessage();
 
-  fetch(SHOW_EPISODES_DATA_URL_TEMPLATE.replace(ID_TOKEN, selectedShowId))
-    .then((response) => response.json())
-    .then((data) => {
-      showEpisodesMap.set(selectedShowId, data);
-      render(showEpisodesMap.get(selectedShowId));
-    })
-    .catch(showLoadingErrorMessage);
+     console.log("Fetching shows...")
+     const response = await fetch(getShowEpisodesUrl( selectedShowId))
+     console.log("Response:", response);
+
+
 }
+
+
+// function fetchShowEpisodes() {
+//   showLoadingDataMessage();
+
+//   fetch(SHOW_EPISODES_DATA_URL_TEMPLATE.replace(ID_TOKEN, selectedShowId))
+//     .then((response) => response.json())
+//     .then((data) => {
+//       showEpisodesMap.set(selectedShowId, data);
+//       render(showEpisodesMap.get(selectedShowId));
+//     })
+//     .catch(showLoadingErrorMessage);
+// }
 //endregion
 
 
