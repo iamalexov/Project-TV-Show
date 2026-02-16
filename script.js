@@ -28,17 +28,32 @@ function setupSearchInput() {
   document.getElementById("search-input").addEventListener("input", onInputSearchInput);
 }
 
-function setupShowsData() {
-  console.log("setup show data called")
-  showLoadingDataMessage();
-  fetch(SHOWS_DATA_URL)
-    .then((response) => response.json())
-    .then((data) => {
-      showList.push(...data.sort(showComparatorByName));
-      renderShowSelect();
-    })
-    .catch(showLoadingErrorMessage);
+async function setupShowsData () {
+    showLoadingDataMessage();
+
+try{
+  const response = await fetch(SHOWS_DATA_URL);
+  const data = await response.json();
+
+   showList.push(...data.sort(showComparatorByName));
+      renderAllShows(showList);
+  }catch(error){showLoadingErrorMessage();
+  }
 }
+
+
+// function setupShowsData() {
+//   console.log("setup show data called")
+//   showLoadingDataMessage();
+//   fetch(SHOWS_DATA_URL)
+//     .then((response) => response.json())
+//     .then((data) => {
+//       showList.push(...data.sort(showComparatorByName));
+//       renderAllShows(showList);
+//     } .catch (error) {
+//     showLoadingErrorMessage();
+// }
+// }
 //endregion
 
 
@@ -89,7 +104,15 @@ function fetchShowEpisodes() {
 
 
 //region render logic
-function renderShowSelect() {
+
+function renderAllShows(showList) {
+  renderShowSelect(showList);
+  renderShowSearchLabel(showList);
+  renderShowCards(showList)
+}
+
+
+function renderShowSelect(showList) {
   const showSelectElement = document.getElementById("show-select");
 
   showSelectElement.options.length = 0;
@@ -100,6 +123,44 @@ function renderShowSelect() {
 
   showSelectElement.dispatchEvent(new Event("input"));
 }
+
+function renderShowSearchLabel(showList) {
+    console.log("setup show data called")
+
+  const searchLabel = document.getElementById("search-label");
+
+  searchLabel.textContent = `Displaying ${showList.length} shows`;
+}
+
+function renderShowCards(showList) {
+  const rootElem = document.getElementById("root");
+  rootElem.innerHTML = "";
+
+  showList.forEach((show) => {
+    const card = document.createElement("section");
+    card.classList.add("card");
+
+    const title = document.createElement("h3");
+    title.textContent = show.name;
+
+    const img = document.createElement("img");
+    img.src = show.image?.medium || "";
+    img.alt = show.name;
+
+    const summary = document.createElement("p");
+    summary.innerHTML = show.summary || "";
+
+    const genres = document.createElement("p");
+    genres.textContent = `Genres: ${show.genres.join(", ")}`;
+
+    const info = document.createElement("p");
+    info.textContent = `Status: ${show.status}, Rating: ${show.rating?.average}, Runtime: ${show.runtime} min`;
+
+    card.append(title, img, summary, genres, info);
+    rootElem.append(card);
+  });
+}
+
 
 function render(episodeList) {
   renderEpisodeSelect(episodeList);
@@ -126,9 +187,9 @@ function renderSearchLabel(episodeList) {
     episode${episodeList.length > 1 ? "s" : ""}`;
 }
 
+
 function renderEpisodeCards(episodeList) {
   const rootElem = document.getElementById("root");
-
   rootElem.innerHTML = "";
 
   episodeList.forEach((episode) => {
