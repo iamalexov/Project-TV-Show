@@ -1,6 +1,5 @@
 const SHOWS_DATA_URL = "https://api.tvmaze.com/shows";
-// const SHOW_EPISODES_DATA_URL_TEMPLATE = "https://api.tvmaze.com/shows/{id}/episodes";
-// const ID_TOKEN = "{id}";
+
 
 function getShowEpisodesUrl(showId) {
   return `https://api.tvmaze.com/shows/${showId}/episodes`;
@@ -10,14 +9,13 @@ const showList = [];
 const showEpisodesMap = new Map();
 
 let selectedShowId = null;
+let currentView = "shows";
 
 
 //region setup
 function setupPage() {
-  setupShowSelect();
-  setupEpisodeSelect();
-  setupSearchInput();
-  setupShowsData();
+  loadShows();
+ 
 }
 
 function setupShowSelect() {
@@ -32,6 +30,23 @@ function setupSearchInput() {
   document.getElementById("search-input").addEventListener("input", onInputSearchInput);
 }
 
+async function loadShows() {
+  try{
+  const response = await fetch(SHOWS_DATA_URL);
+  if (!response.ok) {
+      throw new Error("Server error: " + response.status);
+    }
+    const data = await response.json();
+
+    showList.push(...data);
+    renderAllShows(showList);  
+  }catch(error){
+        console.error("Error fetching:", error)
+
+  }
+}
+
+
 async function setupShowsData () {
     showLoadingDataMessage();
 
@@ -45,19 +60,6 @@ try{
   }
 }
 
-
-// function setupShowsData() {
-//   console.log("setup show data called")
-//   showLoadingDataMessage();
-//   fetch(SHOWS_DATA_URL)
-//     .then((response) => response.json())
-//     .then((data) => {
-//       showList.push(...data.sort(showComparatorByName));
-//       renderAllShows(showList);
-//     } .catch (error) {
-//     showLoadingErrorMessage();
-// }
-// }
 //endregion
 
 
@@ -95,37 +97,29 @@ function onInputSearchInput(event) {
 //region fetch logic
 async function fetchShowEpisodes() {
    showLoadingDataMessage();
-
-     console.log("Fetching shows...")
+    
+   try{
      const response = await fetch(getShowEpisodesUrl( selectedShowId))
-     console.log("Response:", response);
-
-
+     const data = await response.json();
+     showEpisodesMap.set(selectedShowId, data);
+     render (showEpisodesMap.get(selectedShowId));
+   }catch(error){showLoadingErrorMessage}
 }
 
 
-// function fetchShowEpisodes() {
-//   showLoadingDataMessage();
-
-//   fetch(SHOW_EPISODES_DATA_URL_TEMPLATE.replace(ID_TOKEN, selectedShowId))
-//     .then((response) => response.json())
-//     .then((data) => {
-//       showEpisodesMap.set(selectedShowId, data);
-//       render(showEpisodesMap.get(selectedShowId));
-//     })
-//     .catch(showLoadingErrorMessage);
-// }
 //endregion
 
 
 //region render logic
 
 function renderAllShows(showList) {
-  renderShowSelect(showList);
+ currentView = "shows";
+  showShowsView();
+  hideEpisodesView();
+  
   renderShowSearchLabel(showList);
   renderShowCards(showList)
 }
-
 
 function renderShowSelect(showList) {
   const showSelectElement = document.getElementById("show-select");
