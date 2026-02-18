@@ -9,13 +9,22 @@ const showList = [];
 const showEpisodesMap = new Map();
 
 let selectedShowId = null;
-let currentView = "shows";
+let currentview = "shows";
 
 
 //region setup
 function setupPage() {
+  setupShowSelect();
+  setupEpisodeSelect();
+  setupSearchInput();
+  backButton();
+  setupShowsData();
+}
+
+function backButton() {
+document.getElementById("btn").addEventListener("click", () => {
   loadShows();
- 
+});
 }
 
 function setupShowSelect() {
@@ -30,7 +39,11 @@ function setupSearchInput() {
   document.getElementById("search-input").addEventListener("input", onInputSearchInput);
 }
 
+
+
 async function loadShows() {
+    showLoadingDataMessage();
+
   try{
   const response = await fetch(SHOWS_DATA_URL);
   if (!response.ok) {
@@ -38,11 +51,15 @@ async function loadShows() {
     }
     const data = await response.json();
 
-    showList.push(...data);
-    renderAllShows(showList);  
-  }catch(error){
-        console.error("Error fetching:", error)
+    data.sort((a, b) =>
+      a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+    );
 
+    showList.push(...data);
+    renderAllShows(showList);
+    }catch(error){
+        console.error("Error fetching:", error)
+        showLoadingErrorMessage();
   }
 }
 
@@ -113,10 +130,7 @@ async function fetchShowEpisodes() {
 //region render logic
 
 function renderAllShows(showList) {
- currentView = "shows";
-  showShowsView();
-  hideEpisodesView();
-  
+  renderShowSelect(showList);
   renderShowSearchLabel(showList);
   renderShowCards(showList)
 }
